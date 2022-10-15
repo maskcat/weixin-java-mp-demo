@@ -1,6 +1,7 @@
 package com.github.binarywang.demo.wx.mp.handler;
 
 import com.github.binarywang.demo.wx.mp.builder.TextBuilder;
+import com.github.binarywang.demo.wx.mp.utils.ConstellationUtils;
 import com.github.binarywang.demo.wx.mp.utils.JsonUtils;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -41,11 +42,14 @@ public class MsgHandler extends AbstractHandler {
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
+        StringBuilder content = new StringBuilder("૮₍ ˶•ᴗ•˶₎ა亲爱的小羊~\r\n");
+        if (StringUtils.startsWithAny(wxMessage.getContent(),"星座")){
+            content.append(ConstellationUtils.getConstellation("双子座"));
+        }else {
+            content.append("其他功能还在开发中哦~");
+        }
 
-        //TODO 组装回复消息
-        String content = "收到信息内容：" + JsonUtils.toJson(wxMessage);
-
-        return new TextBuilder().build(content, wxMessage, weixinService);
+        return new TextBuilder().build(content.toString(), wxMessage, weixinService);
 
     }
 
