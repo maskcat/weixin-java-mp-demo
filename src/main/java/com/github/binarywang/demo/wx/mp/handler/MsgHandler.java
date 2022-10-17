@@ -1,8 +1,9 @@
 package com.github.binarywang.demo.wx.mp.handler;
 
 import com.github.binarywang.demo.wx.mp.builder.TextBuilder;
+import com.github.binarywang.demo.wx.mp.constant.CommonConst;
+import com.github.binarywang.demo.wx.mp.constant.KeyConst;
 import com.github.binarywang.demo.wx.mp.utils.ConstellationUtils;
-import com.github.binarywang.demo.wx.mp.utils.JsonUtils;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -42,15 +43,27 @@ public class MsgHandler extends AbstractHandler {
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
-        StringBuilder content = new StringBuilder("૮₍ ˶•ᴗ•˶₎ა亲爱的小羊~\r\n");
-        if (StringUtils.startsWithAny(wxMessage.getContent(),"星座")){
-            content.append(ConstellationUtils.getConstellation("双子座"));
-        }else {
+        String content = getContentByMessage(wxMessage);
+
+        return new TextBuilder().build(content, wxMessage, weixinService);
+
+    }
+    public String getContentByMessage(WxMpXmlMessage wxMessage){
+        StringBuilder content = new StringBuilder();
+        if (StringUtils.startsWithAny(wxMessage.getContent(), KeyConst.CONSTELLATION)){
+            if (wxMessage.getFromUser().equals(CommonConst.FY)){
+                content.append(ConstellationUtils.getConstellation("水瓶座"));
+            }else {
+                content.append(ConstellationUtils.getConstellation("双子座"));
+            }
+        }
+        else if(StringUtils.startsWithAny(wxMessage.getContent(),"老公","亲亲","抱抱")){
+            content.append("亲亲~૮₍ ˊᗜˋ₎ა");
+        }
+        else {
             content.append("其他功能还在开发中哦~");
         }
-
-        return new TextBuilder().build(content.toString(), wxMessage, weixinService);
-
+        return content.toString();
     }
 
 }
